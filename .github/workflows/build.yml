@@ -15,7 +15,7 @@ jobs:
       - name: Checkout HeriWRT Source
         uses: actions/checkout@v4
 
-      - name: Set up Dependencies
+      - name: Install Build Dependencies
         run: |
           sudo apt update
           sudo apt install -y build-essential clang flex bison g++ gawk \
@@ -35,20 +35,27 @@ jobs:
           mkdir -p openwrt/files/etc
           mkdir -p openwrt/files/www/luci-static/resources
           echo "Welcome to HeriWRT Firmware!" > openwrt/files/etc/banner
-          cp ./heriWrt-logo-hd.png openwrt/files/www/luci-static/resources/ || echo "Logo not found, skipping."
+          echo -e "config system\n\toption hostname 'HeriWRT'" > openwrt/files/etc/config/system
+          echo -e "config interface 'lan'\n\toption ipaddr '192.168.8.1'\n\toption netmask '255.255.255.0'" > openwrt/files/etc/config/network
+          cp heriWrt-logo-hd.png openwrt/files/www/luci-static/resources/
 
-      - name: Config Build
+      - name: Prepare Default Config
         run: |
-          cd openwrt
-          make defconfig
+          cp default_config openwrt/.config
 
       - name: Build Firmware
         run: |
           cd openwrt
-          make -j$(nproc)
+          make defconfig
+          make -j$(nproc) download world
+
+      - name: Compress Output
+        run: |
+          cd openwrt/bin/targets/
+          zip -r HeriWRT-x86_64.zip .
 
       - name: Upload Firmware Artifact
         uses: actions/upload-artifact@v4
         with:
           name: HeriWRT-x86_64
-          path: openwrt/bin/targets/
+          path: openwrt/bin/targets/**/*.zip
