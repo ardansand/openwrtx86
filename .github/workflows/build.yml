@@ -32,11 +32,11 @@ jobs:
 
       - name: Copy Custom HeriWRT Files
         run: |
-          mkdir -p openwrt/files/etc
+          mkdir -p openwrt/files/etc/config
           mkdir -p openwrt/files/www/luci-static/resources
           echo "Welcome to HeriWRT Firmware!" > openwrt/files/etc/banner
           echo -e "config system\n\toption hostname 'HeriWRT'" > openwrt/files/etc/config/system
-          echo -e "config interface 'lan'\n\toption ipaddr '192.168.1.1'\n\toption netmask '255.255.255.0'" > openwrt/files/etc/config/network
+          echo -e "config interface 'lan'\n\toption ipaddr '192.168.8.1'\n\toption netmask '255.255.255.0'" > openwrt/files/etc/config/network
           cp heriWrt-logo-hd.png openwrt/files/www/luci-static/resources/
 
       - name: Prepare Default Config
