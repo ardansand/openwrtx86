@@ -1,0 +1,4 @@
+config system
+  option hostname 'heriWRT-x86'
+  option timezone 'UTC'
+  option zonename 'UTC'
